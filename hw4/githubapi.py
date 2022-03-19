@@ -1,26 +1,42 @@
 import requests
 import json
 
-def GithubApi(username):
-    response = requests.get("https://api.github.com/users/"+username+"/repos")
-    
-    if response.status_code != 200:
-        print("No Account with that Username/No Response")
-        return False
+def connect(user):
+    code200 = True
+    repo_url = "https://api.github.com/users/%s/repos" ## % (userid)
+    commit_url = "https://api.github.com/repos/%s/%s/commits" ## % (id, repo)
+    repos = {}
 
-    response = response.json()
-
-    if len(response) == 0:
-        print("No Repositories")
-        return False
   
-    for repo in response:
-        repoResponse = requests.get(repo['commits_url'].split("{")[0])
-        repoResponse = repoResponse.json()
-        print("Repository Name: "+ repo['name'] + " \t\t\t\tNumber Of Commits: " + str(len(repoResponse)))
-   
-    return True
+    repo_page = requests.get(repo_url % user)
+    if repo_page.status_code == 200:
+        repo_data = repo_page.json()
+        ## Parse Repositories
+        for each in repo_data:
+            repo_name = each["name"]
+            ## Get Repo Commits
+            commit_page = requests.get(commit_url % (user, repo_name))
+            if commit_page.status_code == 200:
+                commit_data = commit_page.json()
+                repos[repo_name] = commit_data
+                print("Repo: ", repo_name, "   Commits: ", len(commit_data))
+            else:
+                print("No Connection: Line 26")
+                code200 = False
+    else:
+        print("No Connection: Line 18")
+        code200 = False
+        
+    return  repos
 
-if __name__ == "__main__":
-    userInput = input("enter github username: ")
-    GithubApi(userInput)
+## Run Program
+def run():
+    user = input("Please enter a GitHub user ID: ")
+    try:
+        connect(user)
+    except(AttributeError):
+        print("Unable to find an acount with that username")
+
+
+if __name__ == '__main__':
+    run()

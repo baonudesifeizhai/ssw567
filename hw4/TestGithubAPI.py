@@ -1,15 +1,29 @@
 import unittest
+import unittest
+import json
+import githubapi
+from unittest.mock import MagicMock as Mock
+from unittest.mock import patch
 
-from githubapi import GithubApi
-
+ 
  
 
 class TestGithubAPI(unittest.TestCase):
-    def testGithub(self):
-        self.assertEqual(GithubApi('?'), False)
-    def testGithub2(self):
-        self.assertEqual(GithubApi('baonudesifeizhai'), True)
-       
+      
+ 
+    @patch("githubapi.connect")
+    def testConnection(self, mock_connect):
+        mock_connect.return_value = [ {"VOLDOR ": "1",
+                                     "CS555---GEDCOM-Project": "13",
+                                     " ssw567 ": "12",
+                                     "scarlett ": "3",
+                                     "Triangle567": "8"}]
+        self.assertTrue(githubapi.connect("baonudesifeizhai")[0])
+
+   
+    
+
 if __name__ == '__main__':
     print('Running unit tests')
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestGithubAPI)
+    unittest.TextTestRunner(verbosity = 2).run(suite)

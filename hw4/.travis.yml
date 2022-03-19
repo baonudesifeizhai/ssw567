@@ -1,8 +1,8 @@
 language: python
 python:
-  - "3.5"
+  - "3.9"
 install:
-  - pip3.5 install requests
+  - pip3.9 install requests
 # command to run tests
 script:
-  - python -m unittest TestGetRepo
+  - python -m unittest TestGithubAPI
